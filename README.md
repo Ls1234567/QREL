@@ -1,6 +1,6 @@
 QREL is a toolkit to find a maximum successful sub-query
 =========================================
-/QREL contains the whole project.<br>
+/meast-qr contains the whole project.<br>
 /example contains an example entity-relation graph.<br>
 /example/ExampleGraph.pdf is how the exapmle entity-relation graph look like.<br>
 /example/ExampleTriples is the source data of the example.<br>
