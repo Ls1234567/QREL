@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -13,6 +14,8 @@ import org.jgrapht.graph.DirectedMultigraph;
 import name.dxliu.bean.IntegerEdge;
 import name.dxliu.example.ExampleGraphAgent;
 import name.dxliu.example.ExampleOracleAgent;
+import name.dxliu.example.Step1_ExampleTriplePreprocessor;
+import name.dxliu.example.Step2_ExampleOracleUsage;
 import name.sxli.qrel.IQueryRelaxation;
 import name.sxli.qrel.QueryRelaxationOPT;
 
@@ -21,9 +24,16 @@ import name.sxli.qrel.QueryRelaxationOPT;
  * The result of query relaxation is an array which is a subset of the query.
  * 
  */
-public class Step3_ExampleQueryRelaxation {
+public class ExampleQueryRelaxation {
 	public static void main(String[] args) throws Exception {
 		// read entity-relation graph.
+		List<String> relaxResult = getQueryRelaxationResult();
+		System.out.print(relaxResult.toString());
+	}
+	
+	private static List<String> getQueryRelaxationResult() throws Exception{
+		Step1_ExampleTriplePreprocessor.main(null);
+		Step2_ExampleOracleUsage.main(null);
 		DirectedMultigraph<Integer, IntegerEdge> graph = new DirectedMultigraph<>(IntegerEdge.class);
 		List<String> allLine = Files.readAllLines(Paths.get("example/out_id_relation_triples"), Charset.defaultCharset());
 		for (String line : allLine) {
@@ -48,14 +58,16 @@ public class Step3_ExampleQueryRelaxation {
 		
 		int diameter=3;
 		IQueryRelaxation qrel=new QueryRelaxationOPT();
-		int[] result=qrel.relaxQuery(graphAgent, oracleAgent, diameter, queryEntities);
+		int[] resultID=qrel.relaxQuery(graphAgent, oracleAgent, diameter, queryEntities);
 		
-		for(Integer id:result){
+		List<String> result=new ArrayList<>();
+		for(int id:resultID){
 			for(Map.Entry<String, Integer> entry:dictionary.entrySet()){
 				if(entry.getValue()==id)
-					System.out.print(entry.getKey()+" ");
+					result.add(entry.getKey());
 			}
 		}
+		return result;
 	}
 	
 	private static Map<String,Integer> readDictionary() throws IOException {
